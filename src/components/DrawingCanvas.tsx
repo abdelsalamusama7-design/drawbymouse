@@ -55,8 +55,8 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
     };
   }, []);
 
-  const drawStroke = useCallback((ctx: CanvasRenderingContext2D, stroke: Stroke) => {
-    if (stroke.points.length === 0) return;
+  const drawStroke = useCallback((ctx: CanvasRenderingContext2D, stroke: Stroke | null) => {
+    if (!stroke || stroke.points.length === 0) return;
 
     ctx.strokeStyle = stroke.color;
     ctx.lineWidth = stroke.width;
