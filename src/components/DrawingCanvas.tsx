@@ -234,6 +234,13 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
       />
       <div className="absolute top-4 right-4 flex gap-2">
         <button
+          onClick={exportCanvas}
+          disabled={strokes.length === 0}
+          className="rounded-lg bg-primary/80 px-3 py-1.5 text-xs font-medium text-primary-foreground backdrop-blur-sm transition-all hover:bg-primary active:scale-95 disabled:opacity-30"
+        >
+          Save PNG
+        </button>
+        <button
           onClick={undo}
           disabled={strokes.length === 0}
           className="rounded-lg bg-card/80 px-3 py-1.5 text-xs font-medium text-card-foreground backdrop-blur-sm transition-all hover:bg-card active:scale-95 disabled:opacity-30"
