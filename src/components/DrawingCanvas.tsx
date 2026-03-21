@@ -34,6 +34,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const currentStrokeRef = useRef<Stroke | null>(null);
   const strokeIdRef = useRef(0);
+  const lastEndPointRef = useRef<{ point: Point; color: string } | null>(null);
 
   const getPos = useCallback((e: React.MouseEvent | React.TouchEvent): Point => {
     const canvas = canvasRef.current!;
@@ -149,6 +150,11 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
   const stopDrawing = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     if (currentStrokeRef.current && currentStrokeRef.current.points.length > 0) {
+      const pts = currentStrokeRef.current.points;
+      lastEndPointRef.current = {
+        point: pts[pts.length - 1],
+        color: currentStrokeRef.current.color,
+      };
       setStrokes(prev => {
         const next = [...prev, currentStrokeRef.current!];
         onStrokeCountChange?.(next.length);
@@ -158,6 +164,34 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
     currentStrokeRef.current = null;
     setIsDrawing(false);
   }, [onStrokeCountChange]);
+
+  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    if (!lastEndPointRef.current) return;
+    const canvas = canvasRef.current!;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const endPos: Point = {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    };
+    const { point: startPos, color } = lastEndPointRef.current;
+    const numPoints = 20;
+    const points: Point[] = [];
+    for (let i = 0; i <= numPoints; i++) {
+      points.push({
+        x: startPos.x + (endPos.x - startPos.x) * (i / numPoints),
+        y: startPos.y + (endPos.y - startPos.y) * (i / numPoints),
+      });
+    }
+    const lineStroke: Stroke = { points, color, width: brushSize };
+    lastEndPointRef.current = { point: endPos, color };
+    setStrokes(prev => {
+      const next = [...prev, lineStroke];
+      onStrokeCountChange?.(next.length);
+      return next;
+    });
+  }, [brushSize, onStrokeCountChange]);
 
   const clearCanvas = useCallback(() => {
     setStrokes([]);
@@ -183,6 +217,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
         onMouseMove={draw}
         onMouseUp={stopDrawing}
         onMouseLeave={stopDrawing}
+        onDoubleClick={handleDoubleClick}
         onTouchStart={startDrawing}
         onTouchMove={draw}
         onTouchEnd={stopDrawing}
