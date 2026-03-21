@@ -134,6 +134,10 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
     redraw();
   }, [redraw]);
 
+  useEffect(() => {
+    localStorage.setItem("drawing-strokes", JSON.stringify(strokes));
+  }, [strokes]);
+
   const startDrawing = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     const pos = getPos(e);
