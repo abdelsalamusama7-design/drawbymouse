@@ -55,6 +55,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ brushSize, onBrushSizeChange, strokeC
             </button>
           ))}
         </div>
+        <ThemeToggle />
       </div>
     </div>
   );
