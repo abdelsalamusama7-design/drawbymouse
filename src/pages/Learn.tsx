@@ -1,64 +1,29 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import kivyImports from "@/assets/kivy-code-imports.png";
-import kivyTouchFlow from "@/assets/kivy-touch-flow.png";
-import kivyTouchDown from "@/assets/kivy-touch-down.png";
-import kivyTouchMove from "@/assets/kivy-touch-move.png";
-import kivyAppClass from "@/assets/kivy-app-class.png";
+import { useScrollReveal, revealStyle, SectionTag, CodeBlock } from "@/components/learn/ScrollReveal";
 
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const children = el.querySelectorAll("[data-reveal]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            (entry.target as HTMLElement).style.opacity = "1";
-            (entry.target as HTMLElement).style.transform = "translateY(0) blur(0)";
-            (entry.target as HTMLElement).style.filter = "blur(0px)";
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-    children.forEach((child) => observer.observe(child));
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
+import kivyLibraryInfo from "@/assets/kivy-library-info.png";
+import kivyPaintingSetup from "@/assets/kivy-painting-setup.png";
+import kivyColorFlow from "@/assets/kivy-color-flow.png";
+import kivyTouchDownCode from "@/assets/kivy-touch-down-code.png";
+import kivyTouchDownFlow from "@/assets/kivy-touch-down-flow.png";
+import kivyTouchMoveDetail from "@/assets/kivy-touch-move-detail.png";
+import kivyAppRun from "@/assets/kivy-app-run.png";
+import kivyRunCode from "@/assets/kivy-run-code.png";
+import kivyRunDemo from "@/assets/kivy-run-demo.png";
 
-const revealStyle: React.CSSProperties = {
-  opacity: 0,
-  transform: "translateY(18px)",
-  filter: "blur(4px)",
-  transition: "opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1), filter 0.7s cubic-bezier(0.16,1,0.3,1)",
-};
-
-const CodeBlock = ({ code, title }: { code: string; title?: string }) => (
-  <div className="overflow-hidden rounded-xl border border-border bg-[hsl(220,20%,8%)] shadow-lg">
-    {title && (
-      <div className="flex items-center gap-2 border-b border-border/40 px-4 py-2.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-[hsl(0,72%,51%)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[hsl(45,93%,47%)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[hsl(142,71%,45%)]" />
-        <span className="ml-2 text-[11px] text-muted-foreground">{title}</span>
-      </div>
-    )}
-    <pre className="overflow-x-auto p-5 text-[13px] leading-relaxed">
-      <code className="text-[hsl(210,40%,88%)]">{code}</code>
-    </pre>
-  </div>
+const InlineCode = ({ children }: { children: React.ReactNode }) => (
+  <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">{children}</code>
 );
 
-const SectionTag = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-block rounded-md bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-widest text-primary">
-    {children}
-  </span>
-);
+const platforms = [
+  { name: "Windows", icon: "🪟" },
+  { name: "macOS", icon: "🍎" },
+  { name: "Linux", icon: "🐧" },
+  { name: "Android", icon: "📱" },
+  { name: "iOS", icon: "📲" },
+  { name: "Raspberry Pi", icon: "🍓" },
+];
 
 const Learn = () => {
   const containerRef = useScrollReveal();
@@ -72,55 +37,76 @@ const Learn = () => {
             Kivy<span className="text-primary">Paint</span>
           </span>
           <div className="flex items-center gap-4">
-            <a href="#concepts" className="text-xs text-muted-foreground transition-colors hover:text-foreground">
-              Concepts
-            </a>
-            <a href="#code" className="text-xs text-muted-foreground transition-colors hover:text-foreground">
-              Code
-            </a>
-            <Link
-              to="/"
-              className="rounded-lg bg-primary px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.97]"
-            >
+            <a href="#about" className="text-xs text-muted-foreground transition-colors hover:text-foreground">About</a>
+            <a href="#code" className="text-xs text-muted-foreground transition-colors hover:text-foreground">Code</a>
+            <a href="#demo" className="text-xs text-muted-foreground transition-colors hover:text-foreground">Demo</a>
+            <Link to="/" className="rounded-lg bg-primary px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.97]">
               Try the App
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
+      {/* Hero — What is Kivy */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,hsl(220,70%,45%,0.08),transparent_60%)]" />
         <div className="mx-auto max-w-5xl px-6 pb-20 pt-24">
-          <div data-reveal style={revealStyle}>
-            <SectionTag>Open-Source Python Framework</SectionTag>
-            <h1 className="mt-5 max-w-2xl text-4xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl" style={{ textWrap: "balance" }}>
-              Building a Touch Painting App with Kivy
-            </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
-              Learn how Kivy handles multi-touch input, canvas drawing, and random color generation —
-              the core concepts behind creating interactive painting applications that run everywhere.
+          <div data-reveal style={revealStyle} className="grid items-center gap-12 md:grid-cols-2">
+            <div>
+              <SectionTag>Open-Source Python Framework</SectionTag>
+              <h1 className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl" style={{ textWrap: "balance" }}>
+                Building a Touch Painting App with Kivy
+              </h1>
+              <p className="mt-5 text-base leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
+                Kivy is an open-source Python library for building cross-platform GUI applications.
+                It supports multi-touch gestures, mouse and keyboard inputs — ideal for modern interactive apps.
+              </p>
+              <div className="mt-8 flex gap-3">
+                <Link to="/" className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]">
+                  Open Live Demo
+                </Link>
+                <a href="#code" className="rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground transition-all hover:bg-accent hover:text-accent-foreground active:scale-[0.97]">
+                  Read the Guide
+                </a>
+              </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <img src={kivyLibraryInfo} alt="Kivy Library — cross-platform Python framework info" className="w-full rounded-xl border border-border shadow-xl" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cross-Platform Support */}
+      <section id="about" className="border-b border-border bg-muted/30 py-20">
+        <div className="mx-auto max-w-5xl px-6">
+          <div data-reveal style={{ ...revealStyle, transitionDelay: "80ms" }} className="text-center">
+            <SectionTag>Cross-Platform</SectionTag>
+            <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl" style={{ textWrap: "balance" }}>
+              بيشتغل على كل البلاتفورم
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
+              Write once, run everywhere — Kivy apps deploy to all major platforms from a single Python codebase.
             </p>
-            <div className="mt-8 flex gap-3">
-              <Link
-                to="/"
-                className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]"
-              >
-                Open Live Demo
-              </Link>
-              <a
-                href="#concepts"
-                className="rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground transition-all hover:bg-accent hover:text-accent-foreground active:scale-[0.97]"
-              >
-                Read the Guide
-              </a>
+            <div className="mx-auto mt-10 grid max-w-2xl grid-cols-3 gap-4 sm:grid-cols-6">
+              {platforms.map((p, i) => (
+                <div
+                  key={p.name}
+                  data-reveal
+                  style={{ ...revealStyle, transitionDelay: `${120 + i * 70}ms` }}
+                  className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
+                >
+                  <span className="text-2xl">{p.icon}</span>
+                  <span className="text-xs font-medium text-foreground">{p.name}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* Section 1 — Imports & Setup */}
-      <section id="concepts" className="border-b border-border py-20">
+      <section id="code" className="border-b border-border py-20">
         <div className="mx-auto max-w-5xl px-6">
           <div data-reveal style={{ ...revealStyle, transitionDelay: "80ms" }} className="grid items-center gap-12 md:grid-cols-2">
             <div>
@@ -129,18 +115,14 @@ const Learn = () => {
                 Imports & Widget Setup
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
-                Every Kivy painting app starts by importing <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">App</code>,{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">Widget</code>, and the graphics primitives —{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">Color</code>,{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">Ellipse</code>, and{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">Line</code>.
-                The <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">DrawingPad</code> class
-                extends Widget and uses <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">touch.ud</code> (user data dictionary)
-                to store a seeded random color for each unique touch.
+                Every Kivy painting app starts by importing <InlineCode>App</InlineCode>, <InlineCode>Widget</InlineCode>, and
+                the graphics primitives — <InlineCode>Color</InlineCode>, <InlineCode>Ellipse</InlineCode>, and <InlineCode>Line</InlineCode>.
+                The <InlineCode>DrawingPad</InlineCode> class uses <InlineCode>touch.ud</InlineCode> to store a seeded random color for each unique touch.
               </p>
-              <CodeBlock
-                title="drawing_pad.py"
-                code={`from kivy.app import App
+              <div className="mt-6">
+                <CodeBlock
+                  title="drawing_pad.py"
+                  code={`from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Ellipse, Line
 import random
@@ -155,21 +137,17 @@ class DrawingPad(Widget):
                 random.random()
             )
         return touch.ud['color']`}
-              />
+                />
+              </div>
             </div>
             <div className="flex items-center justify-center">
-              <img
-                src={kivyImports}
-                alt="Kivy imports and DrawingPad class definition showing get_color method"
-                className="w-full rounded-xl border border-border shadow-xl"
-                loading="lazy"
-              />
+              <img src={kivyPaintingSetup} alt="Kivy imports and DrawingPad class setup" className="w-full rounded-xl border border-border shadow-xl" loading="lazy" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section 2 — Touch Flow Diagram */}
+      {/* Section 2 — Color Assignment Flow */}
       <section className="border-b border-border bg-muted/30 py-20">
         <div className="mx-auto max-w-5xl px-6">
           <div data-reveal style={{ ...revealStyle, transitionDelay: "80ms" }} className="text-center">
@@ -178,44 +156,29 @@ class DrawingPad(Widget):
               Color Assignment Flow
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
-              When a finger touches the screen, Kivy checks <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">touch.ud</code> for an existing color.
-              If none exists, it seeds the random generator with the touch's unique ID and generates an RGB tuple —
-              ensuring each finger always gets a consistent, unique color.
+              When a finger touches the screen, Kivy checks <InlineCode>touch.ud</InlineCode> for an existing color.
+              If none exists, it seeds the random generator with the touch's unique ID — ensuring each finger gets a consistent, unique color.
             </p>
-            <img
-              src={kivyTouchFlow}
-              alt="Flowchart showing how touch.ud stores color data per touch event"
-              className="mx-auto mt-10 w-full max-w-2xl rounded-xl border border-border bg-card shadow-xl"
-              loading="lazy"
-            />
+            <img src={kivyColorFlow} alt="Flowchart showing how touch.ud stores color data per touch event" className="mx-auto mt-10 w-full max-w-2xl rounded-xl border border-border bg-card shadow-xl" loading="lazy" />
           </div>
         </div>
       </section>
 
       {/* Section 3 — on_touch_down */}
-      <section id="code" className="border-b border-border py-20">
+      <section className="border-b border-border py-20">
         <div className="mx-auto max-w-5xl px-6">
           <div data-reveal style={{ ...revealStyle, transitionDelay: "80ms" }} className="grid items-center gap-12 md:grid-cols-2">
-            <div className="flex items-center justify-center md:order-1">
-              <img
-                src={kivyTouchDown}
-                alt="on_touch_down method code showing ellipse creation and line initialization"
-                className="w-full rounded-xl border border-border shadow-xl"
-                loading="lazy"
-              />
-            </div>
-            <div className="md:order-2">
-              <SectionTag>Step 2</SectionTag>
-              <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Handling Touch Down
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
-                When a touch begins, <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">on_touch_down</code> fires.
-                It retrieves the color, draws an initial ellipse at the touch position,
-                and initializes a <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">Line</code> object stored in{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">touch.ud['line']</code> —
-                ready to be extended as the finger moves.
-              </p>
+            <div className="space-y-6">
+              <div>
+                <SectionTag>Step 2</SectionTag>
+                <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  Handling Touch Down
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
+                  When a touch begins, <InlineCode>on_touch_down</InlineCode> retrieves the color, draws an initial ellipse,
+                  and initializes a <InlineCode>Line</InlineCode> stored in <InlineCode>touch.ud['line']</InlineCode> — ready to be extended as the finger moves.
+                </p>
+              </div>
               <CodeBlock
                 title="on_touch_down"
                 code={`def on_touch_down(self, touch):
@@ -233,6 +196,10 @@ class DrawingPad(Widget):
         )`}
               />
             </div>
+            <div className="flex flex-col items-center gap-6">
+              <img src={kivyTouchDownCode} alt="on_touch_down code" className="w-full rounded-xl border border-border shadow-xl" loading="lazy" />
+              <img src={kivyTouchDownFlow} alt="on_touch_down flow diagram" className="w-full rounded-xl border border-border shadow-xl" loading="lazy" />
+            </div>
           </div>
         </div>
       </section>
@@ -247,26 +214,21 @@ class DrawingPad(Widget):
                 Tracking Touch Movement
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
-                As the finger moves, <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">on_touch_move</code> appends
-                the current position to the line's point list. Kivy automatically
-                re-renders the updated line on the canvas — creating a smooth,
-                continuous stroke that follows the touch path.
+                As the finger moves, <InlineCode>on_touch_move</InlineCode> appends the current position to the line's point list.
+                Kivy automatically re-renders the updated line — creating a smooth, continuous stroke.
               </p>
-              <CodeBlock
-                title="on_touch_move"
-                code={`def on_touch_move(self, touch):
+              <div className="mt-6">
+                <CodeBlock
+                  title="on_touch_move"
+                  code={`def on_touch_move(self, touch):
     touch.ud['line'].points += [
         touch.x, touch.y
     ]`}
-              />
+                />
+              </div>
             </div>
             <div className="flex items-center justify-center">
-              <img
-                src={kivyTouchMove}
-                alt="Diagram showing how on_touch_move extends the line points array"
-                className="w-full rounded-xl border border-border shadow-xl"
-                loading="lazy"
-              />
+              <img src={kivyTouchMoveDetail} alt="on_touch_move diagram showing line extension" className="w-full rounded-xl border border-border shadow-xl" loading="lazy" />
             </div>
           </div>
         </div>
@@ -277,12 +239,7 @@ class DrawingPad(Widget):
         <div className="mx-auto max-w-5xl px-6">
           <div data-reveal style={{ ...revealStyle, transitionDelay: "80ms" }} className="grid items-center gap-12 md:grid-cols-2">
             <div className="flex items-center justify-center md:order-1">
-              <img
-                src={kivyAppClass}
-                alt="TouchDrawApp class with build method returning DrawingPad widget"
-                className="w-full max-w-md rounded-xl border border-border shadow-xl"
-                loading="lazy"
-              />
+              <img src={kivyAppRun} alt="TouchDrawApp class with build method" className="w-full max-w-md rounded-xl border border-border shadow-xl" loading="lazy" />
             </div>
             <div className="md:order-2">
               <SectionTag>Step 4</SectionTag>
@@ -290,21 +247,39 @@ class DrawingPad(Widget):
                 Running the Application
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground" style={{ textWrap: "pretty" }}>
-                The <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">TouchDrawApp</code> class
-                extends <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">App</code> and
-                returns a <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">DrawingPad()</code> instance
-                from its <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">build()</code> method.
-                Calling <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-foreground">run()</code> launches
-                the event loop — and your painting app is live on any platform Kivy supports.
+                The <InlineCode>TouchDrawApp</InlineCode> class extends <InlineCode>App</InlineCode> and
+                returns a <InlineCode>DrawingPad()</InlineCode> from its <InlineCode>build()</InlineCode> method.
+                Calling <InlineCode>run()</InlineCode> launches the event loop on any platform Kivy supports.
               </p>
-              <CodeBlock
-                title="main.py"
-                code={`class TouchDrawApp(App):
+              <div className="mt-6">
+                <CodeBlock
+                  title="main.py"
+                  code={`class TouchDrawApp(App):
     def build(self):
         return DrawingPad()
 
 TouchDrawApp().run()`}
-              />
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6 — Run the Code / Demo */}
+      <section id="demo" className="border-b border-border bg-muted/30 py-20">
+        <div className="mx-auto max-w-5xl px-6">
+          <div data-reveal style={{ ...revealStyle, transitionDelay: "80ms" }} className="text-center">
+            <SectionTag>Result</SectionTag>
+            <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl" style={{ textWrap: "balance" }}>
+              Run the Code
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground">
+              Here's the complete app running — each touch creates a unique colored stroke on a dark canvas.
+            </p>
+            <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
+              <img src={kivyRunCode} alt="IDE showing the complete Kivy painting code" className="w-full rounded-xl border border-border shadow-xl" loading="lazy" />
+              <img src={kivyRunDemo} alt="Running Kivy painting app with colorful strokes" className="w-full rounded-xl border border-border shadow-xl" loading="lazy" />
             </div>
           </div>
         </div>
@@ -321,10 +296,7 @@ TouchDrawApp().run()`}
               We rebuilt this Kivy painting example as a web app using HTML Canvas.
               Try drawing with your mouse or fingers — each stroke gets a random color, just like the original.
             </p>
-            <Link
-              to="/"
-              className="mt-8 inline-block rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]"
-            >
+            <Link to="/" className="mt-8 inline-block rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]">
               Launch Drawing App →
             </Link>
           </div>
