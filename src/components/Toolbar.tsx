@@ -1,5 +1,5 @@
 import React from "react";
-
+import { ThemeToggle } from "./ThemeToggle";
 interface ToolbarProps {
   brushSize: number;
   onBrushSizeChange: (size: number) => void;

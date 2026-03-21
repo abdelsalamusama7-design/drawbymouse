@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useScrollReveal, revealStyle, SectionTag, CodeBlock } from "@/components/learn/ScrollReveal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 import kivyLibraryInfo from "@/assets/kivy-library-info.png";
 import kivyPaintingSetup from "@/assets/kivy-painting-setup.png";
