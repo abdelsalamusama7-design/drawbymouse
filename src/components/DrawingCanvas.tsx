@@ -102,6 +102,9 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
     }
   }, [strokes, drawStroke]);
 
+  const redrawRef = useRef(redraw);
+  redrawRef.current = redraw;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -113,13 +116,13 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
       canvas.height = parent.clientHeight * dpr;
       canvas.style.width = parent.clientWidth + "px";
       canvas.style.height = parent.clientHeight + "px";
-      redraw();
+      redrawRef.current();
     };
 
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, [redraw]);
+  }, []);
 
   useEffect(() => {
     redraw();
