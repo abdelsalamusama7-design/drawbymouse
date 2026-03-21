@@ -34,6 +34,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const currentStrokeRef = useRef<Stroke | null>(null);
   const strokeIdRef = useRef(0);
+  const lastEndPointRef = useRef<{ point: Point; color: string } | null>(null);
 
   const getPos = useCallback((e: React.MouseEvent | React.TouchEvent): Point => {
     const canvas = canvasRef.current!;
