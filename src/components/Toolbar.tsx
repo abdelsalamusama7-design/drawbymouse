@@ -1,5 +1,5 @@
 import React from "react";
-
+import { ThemeToggle } from "./ThemeToggle";
 interface ToolbarProps {
   brushSize: number;
   onBrushSizeChange: (size: number) => void;
@@ -55,6 +55,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ brushSize, onBrushSizeChange, strokeC
             </button>
           ))}
         </div>
+        <ThemeToggle />
       </div>
     </div>
   );

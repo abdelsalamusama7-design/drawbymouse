@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useScrollReveal, revealStyle, SectionTag, CodeBlock } from "@/components/learn/ScrollReveal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 import kivyLibraryInfo from "@/assets/kivy-library-info.png";
 import kivyPaintingSetup from "@/assets/kivy-painting-setup.png";
@@ -43,6 +44,7 @@ const Learn = () => {
             <Link to="/" className="rounded-lg bg-primary px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.97]">
               Try the App
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
