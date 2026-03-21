@@ -197,8 +197,18 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
     setStrokes([]);
     currentStrokeRef.current = null;
     strokeIdRef.current = 0;
+    lastEndPointRef.current = null;
     onStrokeCountChange?.(0);
   }, [onStrokeCountChange]);
+
+  const exportCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = "drawing.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }, []);
 
   const undo = useCallback(() => {
     setStrokes(prev => {
