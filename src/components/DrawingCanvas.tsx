@@ -174,33 +174,75 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
     setIsDrawing(false);
   }, [onStrokeCountChange]);
 
+  const generateShape = useCallback((cx: number, cy: number, seed: number): Point[] => {
+    const size = 30 + seededRandom(seed * 7) * 60;
+    const shapeType = Math.floor(seededRandom(seed * 13) * 5);
+    const points: Point[] = [];
+    const rotation = seededRandom(seed * 17) * Math.PI * 2;
+
+    if (shapeType === 0) {
+      // Star
+      const spikes = 5 + Math.floor(seededRandom(seed * 19) * 4);
+      for (let i = 0; i <= spikes * 2; i++) {
+        const angle = rotation + (i * Math.PI) / spikes;
+        const r = i % 2 === 0 ? size : size * 0.4;
+        points.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+      }
+      points.push(points[0]);
+    } else if (shapeType === 1) {
+      // Circle
+      const segments = 30;
+      for (let i = 0; i <= segments; i++) {
+        const angle = (i / segments) * Math.PI * 2;
+        points.push({ x: cx + Math.cos(angle) * size, y: cy + Math.sin(angle) * size });
+      }
+    } else if (shapeType === 2) {
+      // Triangle
+      for (let i = 0; i <= 3; i++) {
+        const angle = rotation + (i * 2 * Math.PI) / 3;
+        points.push({ x: cx + Math.cos(angle) * size, y: cy + Math.sin(angle) * size });
+      }
+    } else if (shapeType === 3) {
+      // Hexagon
+      for (let i = 0; i <= 6; i++) {
+        const angle = rotation + (i * Math.PI) / 3;
+        points.push({ x: cx + Math.cos(angle) * size, y: cy + Math.sin(angle) * size });
+      }
+    } else {
+      // Spiral
+      const turns = 2 + seededRandom(seed * 23) * 2;
+      const steps = 50;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const angle = rotation + t * turns * Math.PI * 2;
+        const r = t * size;
+        points.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+      }
+    }
+    return points;
+  }, []);
+
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
-    if (!lastEndPointRef.current) return;
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    const endPos: Point = {
+    const pos: Point = {
       x: (e.clientX - rect.left) * scaleX,
       y: (e.clientY - rect.top) * scaleY,
     };
-    const { point: startPos, color } = lastEndPointRef.current;
-    const numPoints = 20;
-    const points: Point[] = [];
-    for (let i = 0; i <= numPoints; i++) {
-      points.push({
-        x: startPos.x + (endPos.x - startPos.x) * (i / numPoints),
-        y: startPos.y + (endPos.y - startPos.y) * (i / numPoints),
-      });
-    }
-    const lineStroke: Stroke = { points, color, width: brushSize };
-    lastEndPointRef.current = { point: endPos, color };
+    strokeIdRef.current += 1;
+    const seed = strokeIdRef.current * 3 + Date.now();
+    const color = getRandomColor(seed);
+    const points = generateShape(pos.x, pos.y, seed);
+    const shapeStroke: Stroke = { points, color, width: brushSize };
+    lastEndPointRef.current = { point: pos, color };
     setStrokes(prev => {
-      const next = [...prev, lineStroke];
+      const next = [...prev, shapeStroke];
       onStrokeCountChange?.(next.length);
       return next;
     });
-  }, [brushSize, onStrokeCountChange]);
+  }, [brushSize, onStrokeCountChange, generateShape]);
 
   const clearCanvas = useCallback(() => {
     setStrokes([]);
