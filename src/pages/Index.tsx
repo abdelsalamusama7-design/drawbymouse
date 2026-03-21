@@ -1,16 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React, { useState } from "react";
+import DrawingCanvas from "@/components/DrawingCanvas";
+import Toolbar from "@/components/Toolbar";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [brushSize, setBrushSize] = useState(8);
+  const [strokeCount, setStrokeCount] = useState(0);
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="flex h-screen flex-col bg-background">
+      <Toolbar
+        brushSize={brushSize}
+        onBrushSizeChange={setBrushSize}
+        strokeCount={strokeCount}
+      />
+      <DrawingCanvas brushSize={brushSize} onStrokeCountChange={setStrokeCount} />
+      <div className="flex items-center justify-center border-t border-border bg-card px-4 py-2">
+        <p className="text-[11px] text-muted-foreground">
+          Draw on the canvas — each stroke gets a random color • Inspired by Kivy's painting example
+        </p>
+      </div>
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
