@@ -4,7 +4,12 @@ import Toolbar from "@/components/Toolbar";
 
 const Index = () => {
   const [brushSize, setBrushSize] = useState(8);
-  const [strokeCount, setStrokeCount] = useState(0);
+  const [strokeCount, setStrokeCount] = useState(() => {
+    try {
+      const saved = localStorage.getItem("drawing-strokes");
+      return saved ? JSON.parse(saved).length : 0;
+    } catch { return 0; }
+  });
 
   return (
     <div className="flex h-screen flex-col bg-background">
