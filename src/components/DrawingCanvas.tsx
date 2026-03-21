@@ -31,7 +31,12 @@ interface DrawingCanvasProps {
 const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountChange }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [strokes, setStrokes] = useState<Stroke[]>([]);
+  const [strokes, setStrokes] = useState<Stroke[]>(() => {
+    try {
+      const saved = localStorage.getItem("drawing-strokes");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const currentStrokeRef = useRef<Stroke | null>(null);
   const strokeIdRef = useRef(0);
   const lastEndPointRef = useRef<{ point: Point; color: string } | null>(null);
