@@ -197,8 +197,18 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
     setStrokes([]);
     currentStrokeRef.current = null;
     strokeIdRef.current = 0;
+    lastEndPointRef.current = null;
     onStrokeCountChange?.(0);
   }, [onStrokeCountChange]);
+
+  const exportCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = "drawing.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }, []);
 
   const undo = useCallback(() => {
     setStrokes(prev => {
@@ -223,6 +233,13 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ brushSize, onStrokeCountC
         onTouchEnd={stopDrawing}
       />
       <div className="absolute top-4 right-4 flex gap-2">
+        <button
+          onClick={exportCanvas}
+          disabled={strokes.length === 0}
+          className="rounded-lg bg-primary/80 px-3 py-1.5 text-xs font-medium text-primary-foreground backdrop-blur-sm transition-all hover:bg-primary active:scale-95 disabled:opacity-30"
+        >
+          Save PNG
+        </button>
         <button
           onClick={undo}
           disabled={strokes.length === 0}
